@@ -35,6 +35,8 @@ PassWord : redhat@123
 # sudo apt-get install jenkins
 
 # sudo vim /etc/default/jenkins
+/etc/sysconfig/jenkins in CentOS/RHEL or /etc/default/jenkins in Debian based distributions
+
 
 # sudo service jenkins start
 #--------------------------------------------------------------------------#
