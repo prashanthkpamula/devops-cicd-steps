@@ -1,0 +1,282 @@
+# Enable Elasticsearch Repository :
+
+Import the Elasticsearch public GPG key to the rpm package manager:
+ 
+# rpm --import http://packages.elastic.co/GPG-KEY-elasticsearch
+
+Insert the following lines to the repository configuration file elasticsearch.repo:
+
+# cd /etc/yum.repos.d
+
+# vi elasticsearch.repo
+
+[elasticsearch]
+name=Elasticsearch repository
+baseurl=http://packages.elastic.co/elasticsearch/2.x/centos
+gpgcheck=1
+gpgkey=http://packages.elastic.co/GPG-KEY-elasticsearch
+enabled=1
+
+Install the Elasticsearch package.
+
+# yum install elasticsearch
+
+Start and enable the service.
+# systemctl daemon-reload
+# systemctl enable elasticsearch
+# systemctl start elasticsearch
+
+
+Allow traffic through TCP port 9200 in your firewall:
+# firewall-cmd --add-port=9200/tcp
+# firewall-cmd --add-port=9200/tcp --permanent
+
+Check if Elasticsearch responds to simple requests over HTTP:
+# curl -X GET http://localhost:9200
+
+{
+  "name" : "Tomorrow Man",
+  "cluster_name" : "elasticsearch",
+  "cluster_uuid" : "dtMg9Ht-Syqt5TscJnL3kA",
+  "version" : {
+    "number" : "2.4.6",
+    "build_hash" : "5376dca9f70f3abef96a77f4bb22720ace8240fd",
+    "build_timestamp" : "2017-07-18T12:17:44Z",
+    "build_snapshot" : false,
+    "lucene_version" : "5.5.4"
+  },
+  "tagline" : "You Know, for Search"
+}
+
+
+#------------------NOTE-------------------------------#
+Make sure you complete the above steps and then proceed with Logstash. 
+Since both Logstash and Kibana share the Elasticsearch GPG key, 
+there is no need to re-import it before installing the packages.
+#---------------------------------------------------------------#
+
+#---------------------------------------------------------------#
+Enable Logstash Repository
+#---------------------------------------------------------------#
+Insert the following lines to the repository configuration file logstash.repo:
+
+[logstash]
+name=Logstash
+baseurl=http://packages.elasticsearch.org/logstash/2.2/centos
+gpgcheck=1
+gpgkey=http://packages.elasticsearch.org/GPG-KEY-elasticsearch
+enabled=1
+
+
+Install the Logstash package:
+
+# yum install logstash
+
+Add a SSL certificate based on the IP address of the ELK server at the the following line below the [ v3_ca ] section in /etc/pki/tls/openssl.cnf:
+[ v3_ca ]
+subjectAltName = IP: 192.168.0.29
+
+# grep '54.225.12.29' /etc/pki/tls/openssl.cnf
+subjectAltName= IP:54.225.12.29
+
+
+Generate a self-signed certificate valid for 365 days:
+
+# cd /etc/pki/tls
+# openssl req -config /etc/pki/tls/openssl.cnf -x509 -days 3650 -batch -nodes -newkey rsa:2048 -keyout private/logstash-forwarder.key -out certs/logstash-forwarder.crt
+ 
+Configure Logstash input, output, and filter files:
+ 
+Input: Create /etc/logstash/conf.d/input.conf and insert the following lines into it. 
+This is necessary for Logstash to “learn” how to process beats coming from clients. 
+Make sure the path to the certificate and key match the right paths as outlined in the previous step:
+
+# cd /etc/logstash/conf.d
+
+# cat input.conf
+input {
+beats {
+port => 5044
+ssl => true
+ssl_certificate => "/etc/pki/tls/certs/logstash-forwarder.crt"
+ssl_key => "/etc/pki/tls/private/logstash-forwarder.key"
+}
+}
+
+Output (/etc/logstash/conf.d/output.conf) file:
+
+# cat output.conf
+output {
+elasticsearch {
+hosts => ["localhost:9200"]
+sniffing => true
+manage_template => false
+index => "%{[@metadata][beat]}-%{+YYYY.MM.dd}"
+document_type => "%{[@metadata][type]}"
+}
+}
+
+Filter (/etc/logstash/conf.d/filter.conf) file. We will log syslog messages for simplicity:
+
+filter {
+if [type] == "syslog" {
+grok {
+match => { "message" => "%{SYSLOGLINE}" }
+}
+date {
+match => [ "timestamp", "MMM  d HH:mm:ss", "MMM dd HH:mm:ss" ]
+}
+}
+}
+
+Verify the Logstash configuration files.
+
+# service logstash configtest
+
+Start and enable logstash:
+
+# systemctl daemon-reload
+# systemctl start logstash
+# systemctl enable logstash
+
+Configure the firewall to allow Logstash to get the logs from the clients (TCP port 5044):
+# firewall-cmd --add-port=5044/tcp
+# firewall-cmd --add-port=5044/tcp --permanent
+#---------------------------------------------------------------#
+
+
+#---------------------------------------------------------------#
+Enable Kibana Repository
+#---------------------------------------------------------------#
+Insert the following lines to the repository configuration file kibana.repo:
+
+[kibana]
+name=Kibana repository
+baseurl=http://packages.elastic.co/kibana/4.4/centos
+gpgcheck=1
+gpgkey=http://packages.elastic.co/GPG-KEY-elasticsearch
+enabled=1
+
+Install the Kibana package:
+
+# yum install kibana
+
+Start and enable Kibana.
+# systemctl daemon-reload
+# systemctl start kibana
+# systemctl enable kibana
+
+Make sure you can access access Kibana’s web interface from another computer (allow traffic on TCP port 5601):
+# firewall-cmd --add-port=5601/tcp
+# firewall-cmd --add-port=5601/tcp --permanent
+
+Launch Kibana (http://192.168.0.29:5601) to verify that you can access the web interface:
+#---------------------------------------------------------------#
+
+#---------------------------------------------------------------#
+We will return here after we have installed and configured Filebeat on the clients.
+#---------------------------------------------------------------#
+
+Install Filebeat on the Client Servers
+
+We will show you how to do this for Client #1 (repeat for Client #2 afterwards, changing paths if applicable to your distribution).
+
+Copy the SSL certificate from the server to the clients:
+# scp /etc/pki/tls/certs/logstash-forwarder.crt root@192.168.0.100:/etc/pki/tls/certs/
+
+Import the Elasticsearch public GPG key to the rpm package manager:
+# rpm --import http://packages.elastic.co/GPG-KEY-elasticsearch
+
+Create a repository for Filebeat (/etc/yum.repos.d/filebeat.repo) in CentOS based distributions:
+
+# vi /etc/yum.repos.d/filebeat.repo
+
+[filebeat]
+name=Filebeat for ELK clients
+baseurl=https://packages.elastic.co/beats/yum/el/$basearch
+enabled=1
+gpgkey=https://packages.elastic.co/GPG-KEY-elasticsearch
+gpgcheck=1
+
+Configure the source to install Filebeat on Debian and its derivatives:
+# aptitude install apt-transport-https
+# echo "deb https://packages.elastic.co/beats/apt stable main" > /etc/apt/sources.list.d/filebeat.list
+# aptitude update
+
+Install the Filebeat package:
+# yum install filebeat        [On CentOS and based Distros]
+# aptitude install filebeat   [On Debian and its derivatives]
+
+Start and enable Filebeat:
+# systemctl start filebeat
+# systemctl enable filebeat
+
+
+Configure Filebeat
+
+A word of caution here. Filebeat configuration is stored in a YAML file, which requires strict indentation. 
+Be careful with this as you edit /etc/filebeat/filebeat.yml as follows:
+
+Under paths, indicate which log files should be “shipped” to the ELK server.
+Under prospectors:
+
+input_type: log
+document_type: syslog
+Under output: 
+Uncomment the line that begins with logstash.
+Indicate the IP address of your ELK server and port where Logstash is listening in hosts.
+Make sure the path to the certificate points to the actual file you created in Step I (Logstash section) above.
+
+Save changes, and then restart Filebeat on the clients:
+
+# systemctl restart filebeat
+
+Once we have completed the above steps on the clients, feel free to proceed.
+
+Testing Filebeat
+In order to verify that the logs from the clients can be sent and received successfully, run the following command on the ELK server:
+
+# curl -XGET 'http://localhost:9200/filebeat-*/_search?pretty'
+
+The output should be similar to (notice how messages from /var/log/messages and /var/log/secure are being received from client1 and client2):
+
+Otherwise, check the Filebeat configuration file for errors.
+# journalctl -xe
+after attempting to restart Filebeat will point you to the offending line(s).
+
+
+#---------------------------------------------------------------#
+Testing Kibana
+#---------------------------------------------------------------#
+After we have verified that logs are being shipped by the clients and received successfully on the server. 
+The first thing that we will have to do in Kibana is configuring an index pattern and set it as default.
+
+
+You can describe an index as a full database in a relational database context. 
+We will go with filebeat-* (or you can use a more precise search criteria as explained in the official documentation).
+Enter filebeat-* in the Index name or pattern field and then click Create:
+
+Please note that you will be allowed to enter a more fine-grained search criteria later. 
+Next, click the star inside the green rectangle to configure it as the default index pattern:
+
+Finally, in the Discover menu you will find several fields to add to the log visualization report. 
+Just hover over them and click Add:
+
+The results will be shown in the central area of the screen as shown above. 
+Feel free to play around (add and remove fields from the log report) to become familiar with Kibana.
+
+By default, Kibana will display the records that were processed during the last 15 minutes (see upper right corner) 
+but you can change that behavior by selecting another time frame:
+
+
+
+Summary
+In this article we have explained how to set up an ELK stack to collect the system logs sent by two clients, a CentOS 7 and a Debian 8 machines.
+Now you can refer to the official Elasticsearch documentation and find more details on how to use this setup to inspect and analyze your logs more efficiently.
+
+
+#---------------------------------------------------------------#
+https://www.tecmint.com/install-elasticsearch-logstash-and-kibana-elk-stack-on-centos-rhel-7/
+
+https://www.itzgeek.com/how-tos/linux/ubuntu-how-tos/setup-elk-stack-ubuntu-16-04.html
+#---------------------------------------------------------------#
