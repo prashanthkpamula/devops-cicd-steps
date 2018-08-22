@@ -1,0 +1,19 @@
+[root@ip-172-31-19-182 devops]# curl -X PUT -u admin:redhat@123 -T /root/devops/target/devops-1.1.0-SNAPSHOT.war http://34.202.237.124:8081/artifactory/libs-release-local/  
+{                                                                                                                                                                            
+  "repo" : "libs-release-local",                                                                                                                                             
+  "path" : "/devops-1.1.0-SNAPSHOT.war",                                                                                                                                     
+  "created" : "2018-08-22T12:31:02.594Z",                                                                                                                                    
+  "createdBy" : "admin",                                                                                                                                                     
+  "downloadUri" : "http://34.202.237.124:8081/artifactory/libs-release-local/devops-1.1.0-SNAPSHOT.war",                                                                     
+  "mimeType" : "application/java-archive",                                                                                                                                   
+  "size" : "21261549",                                                                                                                                                       
+  "checksums" : {                                                                                                                                                            
+    "sha1" : "12895ba225d38947d16737a4ff4fda37c6f7d2fb",                                                                                                                     
+    "md5" : "3798827122a05018f30bfdf303e7e705",                                                                                                                              
+    "sha256" : "9aee23dc43a02684e74acb41ab2d0831549653ff0e2e6bc3b857d3ac8dc6902d"                                                                                            
+  },                                                                                                                                                                         
+  "originalChecksums" : {                                                                                                                                                    
+    "sha256" : "9aee23dc43a02684e74acb41ab2d0831549653ff0e2e6bc3b857d3ac8dc6902d"                                                                                            
+  },                                                                                                                                                                         
+  "uri" : "http://34.202.237.124:8081/artifactory/libs-release-local/devops-1.1.0-SNAPSHOT.war"                                                                              
+}[root@ip-172-31-19-182 devops]#                                                                                                                                             
