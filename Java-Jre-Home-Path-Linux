@@ -40,6 +40,20 @@ export PATH=$PATH:/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.171-8.b10.38.amzn1.x86_6
 # source /root/.bash_profile 
 # source /home/ec2-user/.bash_profile
 
+
+#-----------Execute Below-----------------------#
+
+# cat /etc/bashrc & /etc/profile
+
+JAVA_HOME=/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.181-3.b13.el7_5.x86_64/
+export JAVA_HOME="/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.181-3.b13.el7_5.x86_64/"
+export JRE_HOME="/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.181-3.b13.el7_5.x86_64/jre"
+export PATH=$PATH:/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.181-3.b13.el7_5.x86_64/bin:/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.181-3.b13.el7_5.x86_64/jre/bin
+
+# source /etc/profile 
+# source /etc/bashrc
+#-----------------------------------------------#
+
 STEP-6 : Check the Java version using Admin User: 
 
 [root@ip-172-31-28-116 ~]# java -version
