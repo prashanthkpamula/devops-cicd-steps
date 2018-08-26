@@ -1,0 +1,23 @@
+1. Java Home Path
+2. Maven Home Path
+3. JFrog Artifactory
+4. Maven & Artifactory Integration
+5. Tomcat 
+6. Deployed the Java Build Manually
+7. Download, Install & Configure of Jenkins
+	1. Configured Java Home Path
+	2. Configured Maven Home Path
+	3. Plugins 
+	4. Configured a New Job i.e. devops >>> maven
+	5. devops job is configured 
+		1. git 
+		2. git parameterized 
+		3. clean
+		4. package
+		5. build
+		6. jenkins .m2/settings.xml & settings-security.xml file were created 
+		7. mvn clean package deploy >> .war to Jfrog
+		8. created a container i.e. tomcat-8.0 
+		9. Build has been deployed to tomcat-8.0 
+
+8. Download, Install & Configure SonarQube 
