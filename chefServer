@@ -11,12 +11,12 @@ Creating Our User and Organization
 Before we can move on, we need to set up a user and an organization to belong to. Organizations are the umbrella that we will register nodes under and associate cookbooks with as we move forward. Let’s start by creating our user:
 
 [root] $ # chef-server-ctl user-create USER_NAME FIRST_NAME LAST_NAME EMAIL 'PASSWORD' --filename FILE_NAME
-[root] $ chef-server-ctl user-create keith Keith Thompson keith@linuxacademy.com 'p@ssw0rd' --filename /home/user/keith.pem
+[root] $ chef-server-ctl user-create keshav kkummari Kummari kkummari@kk.com 'p@ssw0rd' --filename /home/user/kk.pem
 
 similar subcommand on the chef-server-ctl utility:
 
 [root] $ # chef-server-ctl org-create SHORT_ORG_NAME 'FULL_ORG_NAME' --association_user USER_NAME --filename FILE_NAME
-[root] $ chef-server-ctl org-create linuxacademy 'Linux Academy, Inc.' --association_user keith --filename linuxacademy-validator.pem
+[root] $ chef-server-ctl org-create linuxKK 'Linux KK' --association_user keith --filename linux-validator.pem
 
 using the chef-server-ctl utility:
 
