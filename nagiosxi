@@ -1,9 +1,11 @@
 
 Step-1 : 
 # yum update -y
+
 Step-2: 
 # yum install net-tools mlocate
 # yum install open-vm-tools
+
 Step-3:
 # curl https://assets.nagios.com/downloads/nagiosxi/install.sh | sh
 
@@ -12,3 +14,5 @@ Step-4: Firewall
 # firewall-cmd --permanent --add-service=https
 
 Step-5:
+You can access the Nagios XI web interface by visiting:
+http://<server_ip>/nagiosxi
