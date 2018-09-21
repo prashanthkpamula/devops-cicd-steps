@@ -1,0 +1,14 @@
+
+Step-1 : 
+# yum update -y
+Step-2: 
+# yum install net-tools mlocate
+# yum install open-vm-tools
+Step-3:
+# curl https://assets.nagios.com/downloads/nagiosxi/install.sh | sh
+
+Step-4: Firewall
+# firewall-cmd --add-service=https
+# firewall-cmd --permanent --add-service=https
+
+Step-5:
