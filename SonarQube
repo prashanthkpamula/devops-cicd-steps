@@ -69,6 +69,7 @@ Download the latest sonarqube installation file to /opt folder. You can get the 
 
 # cd /opt 
 
+# wget https://binaries.sonarsource.com/Distribution/sonarqube/sonarqube-6.7.5.zip
 # sudo wget https://sonarsource.bintray.com/Distribution/sonarqube/sonarqube-6.0.zip
 
 Install unzip and java.
