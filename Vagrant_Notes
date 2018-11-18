@@ -1,0 +1,146 @@
+
+#--------------------------------------------------------#
+Introduction to Vagrant :
+#--------------------------------------------------------#
+Vagrant is a tool for building and managing virtual machine environments in a single workflow. 
+
+With an easy-to-use workflow and focus on automation, Vagrant lowers development environment setup time, increases production parity, and makes the "works on my machine" excuse a relic of the past.
+
+#--------------------------------------------------------#
+Why Vagrant?
+#--------------------------------------------------------#
+Vagrant provides easy to configure, reproducible, and portable work environments built on top of industry-standard technology and controlled by a single consistent workflow to help maximize the productivity and flexibility of you and your team.
+
+To achieve its magic, Vagrant stands on the shoulders of giants. 
+
+Machines are provisioned on top of VirtualBox, VMware, AWS, or any other provider. 
+
+Then, industry-standard provisioning tools such as shell scripts, Chef, or Puppet, can automatically install and configure software on the virtual machine.
+#--------------------------------------------------------#
+
+#--------------------------------------------------------#
+
+#--------------------------------------------------------#
+Verifying the Installation :
+#--------------------------------------------------------#
+
+# vagrant -v
+
+
+#--------------------------------------------------------#
+Up and Running :
+#--------------------------------------------------------#
+
+# vagrant init hashicorp/precise64
+
+# vagrant up
+
+#--------------------------------------------------------#
+Vagrant's basic commands :
+#--------------------------------------------------------#
+All commands should be executed inside the VDD directory.
+
+$ vagrant ssh
+SSH into virtual machine.
+
+$ vagrant up
+Start virtual machine.
+
+$ vagrant share
+Share your virtual machine to the world via a temporary and unique url.
+
+$ vagrant halt
+Halt virtual machine.
+
+$ vagrant destroy
+Destroy your virtual machine. The source code and the content of the data directory will remain unchanged. Only the VirtualBox machine instance will be destroyed. You can build your machine again with the 'vagrant up' command. This command is useful if you want to save disk space.
+Warning: this command will destroy your site databases. Backup them using drush sql-dump > db.sql for each site.
+
+$ vagrant provision
+Reconfigure the virtual machine after a source code change.
+
+$ vagrant reload
+Reload the virtual machine. Useful when you need to change network or synced folder settings.
+
+#--------------------------------------------------------#
+Boxes are added to Vagrant with vagrant box add. This stores the box under a specific name so that multiple Vagrant environments can re-use it. If you have not added a box yet, you can do so now:
+
+$ vagrant box add hashicorp/precise64
+
+#--------------------------------------------------------#
+STEP-1 : Download, Install & Configure Vagarant :
+
+https://www.vagrantup.com/
+
+STEP-2 : Download, Install & Configure Virtualbox :
+
+https://www.virtualbox.org/
+
+STEP-3 : Go to commandline on MacOS/Windows :
+
+Create a Directory :
+
+# mkdir vtest
+
+# cd vtest
+
+# pwd
+
+# ls -lrta
+
+$ mkdir vagrant_getting_started
+$ cd vagrant_getting_started
+$ vagrant init
+#--------------------------------------------------------#
+Up And SSH :
+#--------------------------------------------------------#
+
+# vagrant up
+
+#--------------------------------------------------------#
+
+# vagrant ssh
+
+#--------------------------------------------------------#
+Installing Apache :
+#--------------------------------------------------------#
+
+Create a file bootstrap.sh in the same directory as your Vagrantfile:
+
+#!/usr/bin/env bash
+
+apt-get update
+apt-get install -y apache2
+if ! [ -L /var/www ]; then
+  rm -rf /var/www
+  ln -fs /vagrant /var/www
+fi
+
+
+Next, we configure Vagrant to run this shell script when setting up our machine. We do this by editing the Vagrantfile, which should now look like this:
+
+Vagrant.configure("2") do |config|
+  config.vm.box = "hashicorp/precise64"
+  config.vm.provision :shell, path: "bootstrap.sh"
+end
+
+#--------------------------------------------------------#
+Port Forwarding :
+#--------------------------------------------------------#
+Let us setup a forwarded port so we can access Apache in our guest. Doing so is a simple edit to the Vagrantfile, which now looks like this:
+
+Vagrant.configure("2") do |config|
+  config.vm.box = "hashicorp/precise64"
+  config.vm.provision :shell, path: "bootstrap.sh"
+  config.vm.network :forwarded_port, guest: 80, host: 4567
+end
+Run a vagrant reload or vagrant up (depending on if the machine is already running) so that these changes can take effect.
+
+#--------------------------------------------------------#
+
+# vagrant suspend
+
+# vagrant reload
+
+# vagrant stop
+#--------------------------------------------------------#

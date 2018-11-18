@@ -46,7 +46,6 @@ Docker has the following components
 
 6. Docker Compose − This is used to define applications using multiple Docker containers.
 
-We will discuss all these components in detail in the subsequent chapters.
 
 The official site for Docker is https://www.docker.com/
 #------------------------------------------------------------------------------#
@@ -631,6 +630,11 @@ The RUN command is used to run instructions against the image.
 In our case, we first update our Ubuntu system and then install the nginx server on our ubuntu image.
 
 The last command is used to display a message to the user.
+
+
+To see the logs:
+
+# docker container logs 62d4214818b9
 
 #------------------------------------------------------------------------------#
 Docker - Building Files :

@@ -1,0 +1,148 @@
+
+#-------------------------------------------------------------------------#
+Software Development Life Cycle :
+#-------------------------------------------------------------------------#
+
+1. Design
+2. Development
+3. Deployment
+4. Testing/Release
+
+Note: Docker comes in Deployment stage.
+
+Example : If your part of Shipping various goods.
+
+Trucks to be used?
+Packaging
+Expert Labour?
+Shipping medium?
+
+#-------------------------------------------------------------------------#
+What is Docker?
+#-------------------------------------------------------------------------#
+Docker is a tool designed to make it easier to deploy and run applications by using containers.
+
+Containers allow a developer to package up an application with all of the parts it needs, 
+such as libraries and other dependencies, and ship it all out as one package.
+
+#-------------------------------------------------------------------------#
+How Docker works?
+#-------------------------------------------------------------------------#
+Docker has a client-server architecture
+
+
+Docker-Engine
+Client >>> Server
+
+Note : The daemon (Server) receives the commands from the Docker client through CLI or REST API's.
+
+Docker client and daemon can be present on the same host(Machine) or different hosts.
+
+#-------------------------------------------------------------------------#
+Docker Terminologies:
+#-------------------------------------------------------------------------#
+Dockerfile
+Docker images
+Docker Containers
+Docker Hub/Registry
+Docker Client
+Docker Server
+Docker Engine
+
+
+#-------------------------------------------------------------------------#
+Benefits of Docker ?
+#-------------------------------------------------------------------------#
+
+Build Application only once :
+	- An application inside a container can run on any system that has Docker installed.
+	- So there is no need to build and configure application multiple times on different platforms.
+
+
+Create a docker image or Dockerfile and build a docker image and store in any code repositories:
+Like : hub.docker.com or github.com etc..
+
+Stages : DTAP
+
+D : Development
+T : Test
+A : Acceptance
+P : Production
+
+Every Application works in its own container and does not interferes with other apps.
+
+ISOLATION :
+
+With Docker every application works in isolation in its own container and does not interferes with other applications running on the system.
+
+So, multiple containers can run on same system without interference. 
+For removal also you can simply delete the container and it will not leave behind any files or traces on the system.
+
+
+
+
+#-------------------------------------------------------------------------#
+Overview of Docker Compose :
+#-------------------------------------------------------------------------#
+
+Compose is a tool for defining and running multi-container Docker applications.
+
+With Compose, you use a YAML file to configure your application’s services.
+
+Then, with a single command, you create and start all the services from your configuration. 
+
+Compose works in all environments: production, staging, development, testing, as well as CI workflows. 
+
+#-------------------------------------------------------------------------#
+Using Compose is basically a three-step process:
+#-------------------------------------------------------------------------#
+
+	1. Define your app’s environment with a Dockerfile so it can be reproduced anywhere.
+
+	2. Define the services that make up your app in docker-compose.yml so they can be run together in an isolated environment.
+
+	3. Run docker-compose up and Compose starts and runs your entire app.
+
+#-------------------------------------------------------------------------#
+A docker-compose.yml looks like this:
+#-------------------------------------------------------------------------#
+
+version: '3'
+services:
+  web:
+    build: .
+    ports:
+    - "5000:5000"
+    volumes:
+    - .:/code
+    - logvolume01:/var/log
+    links:
+    - redis
+  redis:
+    image: redis
+volumes:
+  logvolume01: {}
+
+#-------------------------------------------------------------------------#
+Compose has commands for managing the whole lifecycle of your application:
+#-------------------------------------------------------------------------#
+
+1. Start, stop, and rebuild services
+2. View the status of running services
+3. Stream the log output of running services
+4. Run a one-off command on a service
+
+# docker containerid logs <container_id>
+
+# docker-compose logs 
+
+Lync one Container with Another Container:
+
+# docker run --name <name_of_the_container> --link <name_of_the_container>:<container_name> -p 8080:8080 -d <name_of_the_application>
+
+# docker run --name some-wordpress --link some-mysql:mysql -p 8080:8080 -d wordpress
+
+
+#-------------------------------------------------------------------------#
+https://docs.docker.com/compose/overview/
+#-------------------------------------------------------------------------#

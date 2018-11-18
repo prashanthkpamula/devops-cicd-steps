@@ -1,0 +1,50 @@
+
+STEP-1 : Download, Install & Configure Docker on Linux :
+
+# yum install docker -y
+
+STEP-2 : Setup a Docker Group :
+
+# groupadd docker
+
+STEP-3 : Add user into Docker group :
+
+# usermod -aG docker cloud_user 
+
+STEP-4 : Enable & Start the Docker Deamon Service :
+
+# systemctl enable docker 
+
+# systemctl status docker 
+
+# systemctl start docker 
+
+# systemctl status docker 
+
+STEP-5 : Logout from Admin user and cross check with Normal User:
+
+# docker ps 
+
+STEP-6 : Run our First Container 
+
+# docker pull docker.io/hello-world
+
+# docker images
+
+# docker ps
+
+# docker ps -a
+
+# docker run hello-world
+
+# docker ps -a 
+
+
+Deploying a Static Website to the Container (Docker)
+
+# docker run -d --name "FirstWebSite" -p 80:80 spacebones/doge
+
+# docker images
+
+# docker ps
+

@@ -1,0 +1,25 @@
+
+
+Agile 
+
+DevOps Pipeline :
+
+	1. EC2 instance
+		1. Java
+		2. Maven
+		3. Jfrog Artifactory
+		4. Integration with Maven and Jfrog 
+		5. GitFLow
+		6. Executing the Maven Jobs/Goals Manual with Users i.e. root & jenkins
+		7. Application i.e. Apache Tomcat
+		8. Java Build has been deployed to Tomcat manual
+		9. Jenkins 
+		10. Jenkins(4 Jobs)
+			1. Maven Job
+			2. Maven Job with Jfrog Artifactory & Tomcat Deploy
+			3. Maven Job with Jforg Artifactory & Tomcat Deploy using Scripts
+			4. Freestyle Project 
+				1. Github
+				2. For each Push we have configured a job part of Jenkins
+		11. Docker
+			1. Created docker images
