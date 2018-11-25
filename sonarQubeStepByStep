@@ -1,0 +1,96 @@
+#---------------------------------------------------------------------------#
+STEP-1 : Launch a EC2 instance on AWS Cloud
+
+OS : Linux
+Distribution : Ubuntu 18
+
+https://hub.docker.com/_/sonarqube/
+
+#---------------------------------------------------------------------------#
+STEP-2 : Do SSH from Local Laptop/Desktop using SSH tools:
+
+# ssh -i <private_key.pem> <user_name>@<ipaddress>
+
+#---------------------------------------------------------------------------#
+STEP-3 : Download, Install Docker on EC2 instance :
+
+# apt install docker.io -y
+
+#---------------------------------------------------------------------------#
+STEP-4 : Verify the Docker and Pull the SonarQube image from Docker Hub:
+
+# docker images
+
+# docker ps
+
+# docker pull sonarqube
+
+# docker run -d --name sonarqube -p 9000:9000 -p 9092:9092 sonarqube
+
+# docker images
+
+# docker ps
+
+# docker ps -a
+#---------------------------------------------------------------------------#
+STEP-5 : Take the EC2 instance Public Ip and go to browser and validate SonarQube :
+
+http://13.233.174.188:9000/
+
+Configure the SonarQube : 
+
+Generate the Token : admin-sonarqube (Note: Provide any name, I provided as admin-sonarqube)
+
+Token has been generated :
+admin-sonarqube: 9ee865b684b28b29888140016e0cb403fee517eb
+
+Copy the SonarQube Analysis for Maven commandline exeuction :
+
+Execute the SonarQube Scanner for Maven from your computer :
+
+Running a SonarQube analysis with Maven is straighforward. 
+
+You just need to run the following command in your project's folder.
+
+mvn sonar:sonar \
+  -Dsonar.host.url=http://13.233.174.188:9000 \
+  -Dsonar.login=9ee865b684b28b29888140016e0cb403fee517eb
+#---------------------------------------------------------------------------#
+STEP-6 : Setup the SonaQube xml settings in .m2 folder in settings.xml file:
+
+#------Below configuration need to setup for root and Jenkins User----------#
+
+[root@dev .m2]# pwd
+/var/lib/jenkins/.m2
+[root@dev .m2]# ls -lrt settings.xml 
+-rw-r--r--. 1 jenkins jenkins 1627 Nov 24 09:47 settings.xml
+
+  <profile>
+      <id>sonar</id>
+      <activation>
+          <activeByDefault>false</activeByDefault>
+      </activation>
+      <properties>
+          <sonar.host.url>http://13.233.174.188:9000</sonar.host.url>
+          <sonar.login>9ee865b684b28b29888140016e0cb403fee517eb</sonar.login>
+      </properties>
+  </profile>
+
+
+
+[root@dev java-build]# pwd
+/var/lib/jenkins/java-build
+
+
+## Execute maven goal :
+
+mvn sonar:sonar \
+  -Dsonar.host.url=http://13.233.174.188:9000 \
+  -Dsonar.login=9ee865b684b28b29888140016e0cb403fee517eb
+
+#---------------------------------------------------------------------------#
+STEP- : Take the EC2 instance Public Ip and go to browser and validate SonarQube : 
+
+http://13.233.174.188:9000/
+
+#---------------------------------------------------------------------------#
