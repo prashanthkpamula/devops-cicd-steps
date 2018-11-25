@@ -1,0 +1,67 @@
+1. SDLC : Agile
+
+2. Cloud : AWS :
+
+  1. VPC :
+    1. IGW
+    2. RTB
+    3. Subnets
+    4. NAT Gateway
+    5. EC2 instance
+    6. Bastion Server
+    7. NACL
+    8. Security Groups
+    9. EIP
+    10. ELB
+    11. Launch Configuration
+    12. AutoScaling
+
+3. DevOps Tools :
+1. EC2 instance :
+
+Stages :
+
+DTAP
+
+D : dev
+T : tst
+A : acc
+P : prd
+
+Linux : Ubuntu, CentOS, Amazon Linux & Redhat Linux
+Windows : Windows
+
+dev.keshavkummari.com
+  1. Download,Installed, & Configured Utility Commands
+  2. Download,Installed, & Configured Java
+  3. Download,Installed, & Configured Maven
+  4. Download,Installed, & Configured Jfrog Artifactory  [EC2-1] 8gb | t2.micro
+  5. Maven and Jfrog Artifactory Integration
+  6. Download,Installed, & Configured Apache Tomcat      [EC2-2]
+  7. Manual build deployment on Tomcat
+  8. Download,Installed, & Configured Jenkins            [EC2-3]
+  9. Configured various jobs part of Jenkins
+  10. Containerization : Docker
+  11. Container Orachestration : Docker-swarm
+  12. Code Quality : SonarQube                           [EC2-4]
+  13. Continuous Monitoring : Nagios                     [EC2-5]
+  14. Configuration Management : Puppet
+  15. Build, Deploy and Provision Infrastructure : Vagrant
+
+sonar-admin: 697d45f244abb8e781e3b3510abd1f64ff6d3ec0
+
+mvn sonar:sonar \
+  -Dsonar.host.url=http://13.232.66.18:9000 \
+  -Dsonar.login=697d45f244abb8e781e3b3510abd1f64ff6d3ec0
+
+#------------SonarQube Jenkins Task----------------#
+Create a Job part of Jenkins
+Execute a Job and Share outcomes
+
+SonarQube URL : http://13.232.66.18:9000
+http://13.232.66.18:9000/dashboard?id=com.example%3Adevops
+
+Jenkins Url : Username and Password
+#-----------------------------------------------#
+
+curl https://assets.nagios.com/downloads/nagiosxi/install.sh | sh
