@@ -1,0 +1,215 @@
+
+#--------------------------------------------#
+CM Tools :
+#--------------------------------------------#
+
+1. Puppet
+
+2. Chef
+
+3. SaltStack
+
+4. Ansible 
+
+#--------------------------------------------#
+1. Puppet : 
+
+Puppet is open source & Enterprise Edition.
+
+Puppet is Pull based, Agents will be keep on pull changes from Puppet Server
+
+Puppet is Ruby based.
+
+Puppet has Client Server Architecture
+
+Puppet gives you an Automcatic way to Inspect, Deliver, Operate and Future-proof all
+of your instratructure and deliver all of your applications faster.
+#--------------------------------------------#
+2. Chef :
+
+Chef is written in Ruby.
+
+Chef CLI and it uses a Ruby-Base DSL.
+
+Chef Client Server Architecture
+
+Chef is works on Master and Agent
+
+Chef is Pull Based
+#--------------------------------------------#
+3. Saltstack :
+
+Saltstack is written in python
+
+Saltstack is PUSH based
+
+Saltstack is Open Source
+
+#--------------------------------------------#
+4. Ansible :
+
+Ansible is written in Python
+
+Ansible is Open Source
+
+Ansible PUSH Based.
+
+Ansible Tower is Enterprise Edition(Orachstration)
+#--------------------------------------------#
+
+
+#----------------------------------#
+NTP :
+#----------------------------------#
+
+# timedatectl
+
+# timedatectl list-timezones
+
+# timedatectl set-timezone Asia/Kolkata
+
+# yum install ntp -y
+
+# ls -lrt /etc/ntp.conf
+
+# Puppet Master:
+puppet-master.ckk.com.pool.ntp.org
+
+# Puppet Agent1:
+puppet-agent1.ckk.com.pool.ntp.org
+
+# Puppet Agent2:
+puppet-agent2.ckk.com.pool.ntp.org
+
+# Puppet Agent3:
+puppet-agent3.ckk.com.pool.ntp.org
+
+# systemctl status ntpd.service
+# systemctl enable ntpd.service
+# systemctl status ntpd.service
+# systemctl start ntpd.service
+# systemctl status ntpd.service
+
+Sync NTP with the System Time:
+
+# ntpdate pool.ntp.org
+
+#----------------------------------#
+Setup Hostname :
+#----------------------------------#
+
+# hostnamectl
+
+# hostnamectl set-hostname "puppet-agent2.ckk.com"
+
+# ls -lrt /etc/hosts
+
+# Puppet Master
+13.115.213.59 puppet-master.ckk.com
+
+# Puppet Agent-1
+52.198.33.251 puppet-agent1.ckk.com 
+
+# Puppet Agent-2
+13.114.50.4 puppet-agent2.ckk.com
+
+# Puppet Agent-3
+54.238.220.150 puppet-agent3.ckk.com
+
+# Puppet Agent-1
+# ping 52.198.33.251
+
+# Puppet Agent-2
+# ping 13.114.50.4
+
+# Puppet Agent-3
+# ping 54.238.220.150
+
+# Puppet Agent-1
+# ping puppet-agent1.ckk.com
+
+# Puppet Agent-2
+# ping puppet-agent2.ckk.com
+
+# Puppet Agent-3
+# ping puppet-agent3.ckk.com
+
+
+#-------------------------------------------------#
+
+[root@puppet-master ~]# sudo -u puppet puppet master --no-daemonize --verbose
+Info: Creating a new SSL key for ca
+Info: Creating a new SSL certificate request for ca
+Info: Certificate Request fingerprint (SHA256): F7:EE:E5:36:97:32:C7:CC:C2:C1:2E:BE:AC:AB:2D:C2:59:C9:37:0C:2D:E1:19:A9:A4:96:9E:02:66:4F:AD:34
+Notice: Signed certificate request for ca
+Info: Creating a new certificate revocation list
+Info: Creating a new SSL key for puppet-master.ckk.com
+Info: csr_attributes file loading from /var/lib/puppet/.puppet/csr_attributes.yaml
+Info: Creating a new SSL certificate request for puppet-master.ckk.com
+Info: Certificate Request fingerprint (SHA256): 5E:F7:9E:F7:34:53:10:FA:F2:30:08:F9:F1:C7:6C:19:0D:AB:10:59:41:FF:10:D8:08:C9:DE:C5:99:AE:DA:83
+Notice: puppet-master.ckk.com has a waiting certificate request
+Notice: Signed certificate request for puppet-master.ckk.com
+Notice: Removing file Puppet::SSL::CertificateRequest puppet-master.ckk.com at '/var/lib/puppet/.puppet/ssl/ca/requests/puppet-master.ckk.com.pem'
+Notice: Removing file Puppet::SSL::CertificateRequest puppet-master.ckk.com at '/var/lib/puppet/.puppet/ssl/certificate_requests/puppet-master.ckk.com.pem'
+Notice: Starting Puppet master version 3.8.7
+
+
+[root@puppet-master ~]# puppet cert list
+  "puppet-agent3.ckk.com" (SHA256) D1:64:91:33:7F:FD:34:49:EA:DB:99:5C:55:BF:B3:AD:16:BF:5E:DC:06:EE:9B:E7:A6:8A:E6:27:AC:7C:D5:16
+[root@puppet-master ~]# puppet cert sign puppet-agent3.ckk.com
+Notice: Signed certificate request for puppet-agent3.ckk.com
+Notice: Removing file Puppet::SSL::CertificateRequest puppet-agent3.ckk.com at '/var/lib/puppet/ssl/ca/requests/puppet-agent3.ckk.com.pem'
+
+[root@puppet-agent3 ~]# puppet agent --fingerprint
+(SHA256) D1:64:91:33:7F:FD:34:49:EA:DB:99:5C:55:BF:B3:AD:16:BF:5E:DC:06:EE:9B:E7:A6:8A:E6:27:AC:7C:D5:16
+
+
+
+[root@puppet-master ~]# puppet cert list
+  "puppet-agent1.ckk.com" (SHA256) 97:F4:6E:F8:B0:DD:DF:A6:3A:BE:A8:14:E2:E6:17:43:49:74:88:5C:E0:80:38:D4:D5:50:D1:10:89:DD:B9:89
+[root@puppet-master ~]# 
+[root@puppet-master ~]# puppet cert sign puppet-agent1.ckk.com
+Notice: Signed certificate request for puppet-agent1.ckk.com
+Notice: Removing file Puppet::SSL::CertificateRequest puppet-agent1.ckk.com at '/var/lib/puppet/ssl/ca/requests/puppet-agent1.ckk.com.pem'
+[root@puppet-master ~]# 
+
+[root@puppet-agent1 ~]# puppet agent --fingerprint
+(SHA256) 97:F4:6E:F8:B0:DD:DF:A6:3A:BE:A8:14:E2:E6:17:43:49:74:88:5C:E0:80:38:D4:D5:50:D1:10:89:DD:B9:89
+[root@puppet-agent1 ~]# 
+
+
+[root@puppet-master ~]# puppet cert list
+  "puppet-agent2.ckk.com" (SHA256) 38:F6:87:4F:DC:4A:01:91:E8:7D:27:6B:A0:B1:C8:C1:B7:11:30:61:F8:D3:8E:D6:B8:5D:F5:78:83:FB:CD:1B
+[root@puppet-master ~]# 
+[root@puppet-master ~]# puppet cert sign puppet-agent2.ckk.com
+Notice: Signed certificate request for puppet-agent2.ckk.com
+Notice: Removing file Puppet::SSL::CertificateRequest puppet-agent2.ckk.com at '/var/lib/puppet/ssl/ca/requests/puppet-agent2.ckk.com.pem'
+[root@puppet-master ~]
+
+[root@puppet-agent2 ~]# puppet agent --fingerprint
+(SHA256) 38:F6:87:4F:DC:4A:01:91:E8:7D:27:6B:A0:B1:C8:C1:B7:11:30:61:F8:D3:8E:D6:B8:5D:F5:78:83:FB:CD:1B
+[root@puppet-agent2 ~]# 
+
+
+[root@puppet-agent1 ~]# puppet agent -t
+Warning: Unable to fetch my node definition, but the agent run will continue:
+Warning: Server hostname '13.115.213.59' did not match server certificate; expected one of puppet, DNS:puppet, DNS:puppet-master, DNS:puppet-master.ckk.com
+Info: Retrieving pluginfacts
+Error: /File[/var/lib/puppet/facts.d]: Failed to generate additional resources using 'eval_generate': Server hostname '13.115.213.59' did not match server certificate; expected one of puppet, DNS:puppet, DNS:puppet-master, DNS:puppet-master.ckk.com
+Error: /File[/var/lib/puppet/facts.d]: Could not evaluate: Could not retrieve file metadata for puppet://13.115.213.59/pluginfacts: Server hostname '13.115.213.59' did not match server certificate; expected one of puppet, DNS:puppet, DNS:puppet-master, DNS:puppet-master.ckk.com
+Info: Retrieving plugin
+Error: /File[/var/lib/puppet/lib]: Failed to generate additional resources using 'eval_generate': Server hostname '13.115.213.59' did not match server certificate; expected one of puppet, DNS:puppet, DNS:puppet-master, DNS:puppet-master.ckk.com
+Error: /File[/var/lib/puppet/lib]: Could not evaluate: Could not retrieve file metadata for puppet://13.115.213.59/plugins: Server hostname '13.115.213.59' did not match server certificate; expected one of puppet, DNS:puppet, DNS:puppet-master, DNS:puppet-master.ckk.com
+Error: Could not retrieve catalog from remote server: Server hostname '13.115.213.59' did not match server certificate; expected one of puppet, DNS:puppet, DNS:puppet-master, DNS:puppet-master.ckk.com
+Warning: Not using cache on failed catalog
+Error: Could not retrieve catalog; skipping run
+Error: Could not send report: Server hostname '13.115.213.59' did not match server certificate; expected one of puppet, DNS:puppet, DNS:puppet-master, DNS:puppet-master.ckk.com
+[root@puppet-agent1 ~]# 
+
+
+
+
+
+
+
+
