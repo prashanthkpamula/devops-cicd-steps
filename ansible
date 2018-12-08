@@ -1,0 +1,127 @@
+Ansible & Ansible Tower
+Ansible : Open Source
+From Redhat
+
+What is Ansible?
+
+1. Change Management :
+  - Define a System State : Download, Install, Configure, etc..
+
+2. provisioning :
+  - Prepare a system to make it ready:
+    - webserver
+    - Applciation servers
+    - DB servers
+    - SMTP/Email Server
+    - FTP server
+
+Example :
+  1. BASIC OS -------------------------->>> Webserver
+    1. Install Web software i.e. Apache httpd
+    2. Copy Configurations
+    3. Copy Web files
+    4. Install Security Updates
+    5. Start Web Server
+
+3. automation :
+  - Define tasks to be executed automatically:
+    - Orderd tasks
+    - Make Decisions
+    - Run the task
+
+4. Orchestration :
+  Coordinates automation BETWEEN systems :
+    1. Task1 --- node1
+    2. Task2 --- node2
+    3. Task3 --- node3
+
+Ansible Control Server----------> Webserver
+                      ----------> Applications
+                      ----------> Firewalls
+                      ----------> Middleware
+                      ----------> Load balancers
+                      ----------> Notifications
+
+Why Ansible ?
+
+1. No Agents
+2. No Database
+3. No Residual Software
+4. No Complex upgrades
+
+YAML :
+  1. No Programming is required
+  2. NOT a Markup Language
+  3. Structured
+  4. Easy to Read and Write
+
+Security :
+  1. Built-in Security :
+    1. SSH
+    2. Root / Sudo Usage
+    3. Encypted vault
+
+Easy to Extend :
+    1. URL / RESTFUL Calls
+    2. Shell Commands
+    3. Scripts
+    4. Ansible-galaxy
+
+
+Ansible Architecture :
+
+1. Ansible Master :
+  1. inventory
+    1. Webserver
+      [webservers]
+      192.168.33.10  (hosts or nodes or agents or instance)
+    2. Applications
+      [applicationservers]
+      192.168.33.11  (hosts or nodes or agents or instance)
+    3. Database
+      [databaseservers]
+      192.168.33.12  (hosts or nodes or agents or instance)
+    4. Storage
+      [storageservers]
+      192.168.33.13  (hosts or nodes or agents or instance)
+    5. Backup & Recovery
+      [backupandrecovery]
+      192.168.33.14  (hosts or nodes or agents or instance)
+
+Playbook :
+  1. Download, Install and Configure Webserver i.e. Apache httpd
+  2. Service/Daemon should be enabled at bootlevel and start the service
+  3. Administration
+  4. Networking
+  5. Controlling Services and Daemons
+  6. Process Management
+
+Ansible Master >>> Pushing Changes to nodes
+
+ansible ----SSH---> node1
+        ----SSH---> node2
+        ----SSH---> node3
+        ----SSH---> node4
+        ----SSH---> node5
+
+#-------------------------------------------------------------#
+6 Operating systems :
+  1. Ansible Master : ansible
+  2. node1 : webserver
+  3. node2 : application server
+  4. node3 : database server
+  5. node4 : storage server
+  6. node5 : backup and recovery server
+
+Setup :
+1. Download, Install and Configure Ansible on Ansible Master
+2. Configure SSH connection from Ansible Master to hodes
+3. Create a User and Assign a password in all servers
+4. Add user into Admin list
+5. Generate SSH Key on Master Server and Send the SSH key to Nodes
+6. Go to Ansible Master and Check Ansible Configuration :
+  1. Update the Nodes information on ansible configuration files.
+  2. Do the Administration from Ansible Master
+  3. Write a Playbook and execute on a specific node
+  4. Validate your playbook on node
+#-------------------------------------------------------------#
