@@ -1,0 +1,203 @@
+#------------------------------------------------------------------#
+Ansible Installation Step by Step on CentOS-7 :
+#------------------------------------------------------------------#
+
+#-----------------------------#
+Ansible Master Configuration:
+#-----------------------------#
+
+Instance-1 : CentOS-7
+Hostname   : ansible.kk.com
+IPAddress  : 172.31.4.117
+Useradd    : test
+Password   : redhat
+Add user   : /etc/sudoers
+Uncomment  : "PermitRootLogin" in /etc/ssh/sshd_config
+Uncomment  : "PasswordAuthentication" in /etc/ssh/sshd_config
+SSH Daemon : Restart systemctl restart sshd
+Generate SSHKey 		: ssh-keygen
+Exchange SSHKey 		: ssh-copy-id <node1.kk.com>/ipaddress
+Utility Softwares 		: # yum install wget vim curl elinks unzip -y
+Dependency Softwares 	: # yum install python -y
+
+Ansible    : Enable the EPEL Repo for Ansible
+				# wget https://dl.fedoraproject.org/pub/epel/7/x86_64/Packages/e/epel-release-7-11.noarch.rpm
+				# rpm -ivh epel-release-7-11.noarch.rpm
+				# yum update -y
+		   : Download, Install & Configure ansible
+		   		# yum install ansible -y
+		   		# ansible --version
+
+		   : Configure Ansible
+		   		# cp -pv /etc/ansible/ansible.cfg /etc/ansible/ansible.cfg_original
+		   		# grep -n "log_path" /etc/ansible/ansible.cfg (Note : Uncomment)
+		   		# touch /var/log/ansible.log
+		   		# chmod 777 touch /var/log/ansible.log
+		   		# ls -lrt /var/log/ansible.log
+		   		# cp -pv /etc/ansible/hosts /etc/ansible/hosts_original
+
+
+Ansible Master Configuration :
+
+If you want to change the Ansible Configuration file :
+	# set | grep -i ansible
+	# mkdir -p /home/test/config
+	# export ANSIBLE_CONFIG=/home/test/config/myansible.cfg
+	# cp -pv /etc/ansible/ansible.cfg /home/test/config/myansible.cfg
+
+Ansible Commands :
+
+# ansible all --list-hosts
+
+# ansible webservers -m ping
+
+# ansible dbservers -m ping
+
+# ansible dbservers -m service -a "name=httpd state=started"
+
+# ansible dbservers -m service -a "name=postfix state=started"
+
+# ansible dbservers -m yum -a "name=httpd state=present"
+
+
+Inventory Managment :
+	# cp -pv /etc/ansible/hosts /etc/ansible/hosts_original
+	# vi /etc/ansible/hosts
+		- Remove everything from /etc/ansible/hosts file and add new values
+
+	$ ansible all --list-hosts
+
+	# vi /etc/ansible/hosts
+		[servers]
+		172.31.8.172
+
+	$ ansible all --list-hosts
+
+	$ ansible servers -m ping
+
+First Playbook :
+
+
+[test@ansible ~]$ cat webserer.yml
+---
+- name: play 1
+  hosts: 172.31.8.172
+  remote_user: test
+  become: yes
+  become_method: sudo
+  tasks:
+       - name: Install web service
+         yum:
+            name: httpd
+            state: present
+       - name: Start Web Server
+         service:
+           name: httpd
+           state: started
+
+
+$ ansible-playbook  webserer.yml
+
+
+[test@ansible ~]$ cat index.html
+<html>
+<head>
+   <meta charset="utf-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1">
+   <title>My First Website Using Ansible</title>
+</head>
+<body bgcolor="olive">
+
+<h1> Welcome to Ansible World by Keshav Kummari</h1>
+
+</body>
+</html>
+[test@ansible ~]$ cat nginx.yml
+---
+- name: Install nginx
+  hosts: dbservers
+  become: true
+
+  tasks:
+  - name: Add epel-release repo
+    yum:
+      name: epel-release
+      state: present
+
+  - name: Install nginx
+    yum:
+      name: nginx
+      state: present
+
+  - name: Insert Index Page
+    template:
+      src: index.html
+      dest: /usr/share/nginx/html/index.html
+
+  - name: Start NGiNX
+    service:
+      name: nginx
+      state: started
+
+
+
+#-----------------------------#
+Ansible Nodes Configuration:
+#-----------------------------#
+
+Instance-2 : CentOS-7
+Hostname   : node1.kk.com
+IPAddress  : 172.31.8.172
+Useradd    : test
+Password   : redhat
+Add user   : /etc/sudoers
+Uncomment  : "PermitRootLogin" in /etc/ssh/sshd_config
+Uncomment  : "PasswordAuthentication" in /etc/ssh/sshd_config
+SSH Daemon : Restart systemctl restart sshd
+Generate SSHKey 		: ssh-keygen
+Exchange SSHKey 		: ssh-copy-id <node1.kk.com>/ipaddress
+Utility Softwares 		: # yum install wget vim curl elinks unzip -y
+Dependency Softwares 	: # yum install python -y
+
+Ansible    : Enable the EPEL Repo for Ansible
+				# wget https://dl.fedoraproject.org/pub/epel/7/x86_64/Packages/e/epel-release-7-11.noarch.rpm
+				# rpm -ivh epel-release-7-11.noarch.rpm
+				# yum update -y
+		   : Download, Install & Configure ansible
+		   		# yum install ansible -y
+
+		   : Configure Ansible
+		   		# cp -pv /etc/ansible/ansible.cfg /etc/ansible/ansible.cfg_original
+		   		# grep -n "log_path" /etc/ansible/ansible.cfg (Note : Uncomment)
+		   		# touch /var/log/ansible.log
+		   		# chmod 777 touch /var/log/ansible.log
+		   		# ls -lrt /var/log/ansible.log
+		   		# cp -pv /etc/ansible/hosts /etc/ansible/hosts_original
+
+#------------------------------------------------------------------#
+
+# ifconfig
+
+# hostnamectl set-hostname "ansible.kk.com"
+
+# cat /etc/hosts
+
+# echo 172.31.8.172 node1.kk.com >> /etc/hosts
+
+# echo 172.31.4.117 ansible.kk.com >> /etc/hosts
+
+# useradd test
+
+# passwd test
+
+# vi /etc/sudoers
+
+# ls -lrt /etc/ssh/sshd_config
+
+# systemctl restart sshd
+
+# grep test /etc/passwd /etc/shadow /etc/gshadow
+
+# grep -n "PermitRootLogin" /etc/ssh/sshd_config
+
+# grep -n "PasswordAuthentication" /etc/ssh/sshd_config
