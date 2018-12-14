@@ -1,0 +1,150 @@
+
+Install Kubernetes(k8s) on CentOS-7/RHEL-7 using Vagrant on MacOS
+
+On MacOS/Windows open Terminal/Cmder/Gitbash and Create 3 terminals as below:
+
+Terminal-0 : k8s-master 
+Terminal-1 : k8s-node1
+Terminal-2 : k8s-node2 
+
+STEP-1 : Go to Terminal and Create a directory/folder:
+
+Check current working directory/folder:
+$ pwd
+/Users/keshavkummari
+
+Create a directory/folder:
+$ mkdir k8s-workstation
+
+Check the directory/folder status:
+$ ls -ld k8s-workstation/
+
+Navigate inside the directory/folder:
+$ cd k8s-workstation/
+
+Check current working directory/folder status:
+$ pwd
+/Users/keshavkummari/k8s-workstation
+
+Create a Sub-Directory/Folder:
+$ mkdir k8s-master
+
+Check the Directory Status:
+$ ls -lrt
+drwxr-xr-x  2 keshavkummari  staff  64 Dec 14 10:59 k8s-master
+
+Go to Terminal-1 and Create k8s-node1 Sub-Directory/Folder:
+$ mkdir k8s-node1
+
+Check the Directory Status:
+$ ls -lrt
+drwxr-xr-x  2 keshavkummari  staff  64 Dec 14 10:59 k8s-master
+drwxr-xr-x  2 keshavkummari  staff  64 Dec 14 11:00 k8s-node1
+
+Go to Terminal-2 and Create k8s-node1 Sub-Directory/Folder:
+$ mkdir k8s-node2
+
+Check the Directory Status:
+$ ls -lrt
+drwxr-xr-x  2 keshavkummari  staff  64 Dec 14 10:59 k8s-master
+drwxr-xr-x  2 keshavkummari  staff  64 Dec 14 11:00 k8s-node1
+drwxr-xr-x  2 keshavkummari  staff  64 Dec 14 11:02 k8s-node2
+
+Go to all the 3 terminals and creating a CentOS 7 guest machines:
+
+
+$ cd k8s-master/
+$ pwd
+/Users/keshavkummari/k8s-workstation/k8s-master
+$ ls -lrt
+$ 
+$ vagrant box add centos/7
+/opt/vagrant/embedded/gems/2.2.1/gems/vagrant-2.2.1/lib/vagrant/util/which.rb:37: warning: Insecure world writable dir /Users/keshavkummari in PATH, mode 040777
+==> box: Loading metadata for box 'centos/7'
+    box: URL: https://vagrantcloud.com/centos/7
+This box can work with multiple providers! The providers that it
+can work with are listed below. Please review the list and choose
+the provider you will be working with.
+
+1) hyperv
+2) libvirt
+3) virtualbox
+4) vmware_desktop
+
+Enter your choice: 3
+==> box: Adding box 'centos/7' (v1811.02) for provider: virtualbox
+    box: Downloading: https://vagrantcloud.com/centos/boxes/7/versions/1811.02/providers/virtualbox.box
+    box: Download redirected to host: cloud.centos.org
+==> box: Successfully added box 'centos/7' (v1811.02) for 'virtualbox'!
+
+
+$ vagrant init --minimal
+A `Vagrantfile` has been placed in this directory. You are now
+ready to `vagrant up` your first virtual environment! Please read
+the comments in the Vagrantfile as well as documentation on
+`vagrantup.com` for more information on using Vagrant.
+$ ls -lrt
+total 8
+-rw-r--r--  1 keshavkummari  staff  64 Dec 14 11:39 Vagrantfile
+$ 
+
+$samplescript = <<SCRIPT
+yum install -y httpd
+systemctl enable httpd
+systemctl start httpd
+SCRIPT
+
+Vagrant.configure(2) do |config|
+  config.vm.box = "centos/7"
+  config.vm.hostname = "k8s-master-kk.com"
+  config.vm.network "private_network", ip: "192.168.33.10"
+  config.vm.provision "shell", inline: $samplescript
+    
+  config.vm.provider "virtualbox" do |vb|
+    vb.memory = "1024"
+    vb.cpus = "2"
+  end
+end
+
+
+k82-node1.kk.com
+
+$samplescript = <<SCRIPT
+yum install -y httpd
+systemctl enable httpd
+systemctl start httpd
+SCRIPT
+
+Vagrant.configure(2) do |config|
+  config.vm.box = "centos/7"
+  config.vm.hostname = "k8s-node1-kk.com"
+  config.vm.network "private_network", ip: "192.168.33.11"
+  config.vm.provision "shell", inline: $samplescript
+    
+  config.vm.provider "virtualbox" do |vb|
+    vb.memory = "1024"
+    vb.cpus = "2"
+  end
+end
+
+
+$samplescript = <<SCRIPT
+yum install -y httpd
+systemctl enable httpd
+systemctl start httpd
+SCRIPT
+
+Vagrant.configure(2) do |config|
+  config.vm.box = "centos/7"
+  config.vm.hostname = "k8s-node2-kk.com"
+  config.vm.network "private_network", ip: "192.168.33.12"
+  config.vm.provision "shell", inline: $samplescript
+    
+  config.vm.provider "virtualbox" do |vb|
+    vb.memory = "1024"
+    vb.cpus = "2"
+  end
+end
+
+
+https://www.linuxtechi.com/install-kubernetes-1-7-centos7-rhel7/
