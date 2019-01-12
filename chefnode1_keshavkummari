@@ -1,0 +1,29 @@
+
+ChefNode1 :
+
+# hostnamectl set-hostname "chefnode1.keshavkummari.com"
+
+# ifconfig 
+
+# echo 172.31.30.62 chefdk.keshavkummari.com >> /etc/hosts
+
+# echo 172.31.17.9 chefserver.keshavkummari.com >> /etc/hosts
+
+# echo 172.31.20.153 chefnode1.keshavkummari.com >> /etc/hosts
+
+# cat /etc/hosts
+
+172.31.17.9 chefserver.keshavkummari.com
+172.31.30.62 chefdk.keshavkummari.com
+172.31.20.153 chefnode1.keshavkummari.com
+
+
+# yum install vim* wget* curl* elinks* unzip* -y
+
+Assign the Password to the user:
+
+# password centos
+
+Change the user Group:
+
+# usermod -aG wheel centos

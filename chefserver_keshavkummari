@@ -1,0 +1,49 @@
+[root@chefserver ~]# 
+
+# hostnamectl set-hostname "chefserver.keshavkummari.com"
+
+# ifconfig 
+
+# echo 172.31.30.62 chefdk.keshavkummari.com >> /etc/hosts
+
+# echo 172.31.17.9 chefserver.keshavkummari.com >> /etc/hosts
+
+# echo 172.31.20.153 chefnode1.keshavkummari.com >> /etc/hosts
+
+# cat /etc/hosts
+
+172.31.17.9 chefserver.keshavkummari.com
+172.31.30.62 chefdk.keshavkummari.com
+172.31.20.153 chefnode1.keshavkummari.com
+
+# yum install vim* wget* curl* elinks* unzip* -y
+
+Assign the Password to the user:
+
+# password centos
+
+Change the user Group:
+
+# usermod -aG wheel centos
+
+# wget https://packages.chef.io/files/stable/chef-server/12.17.5/el/7/chef-server-core-12.17.5-1.el7.x86_64.rpm
+
+# ls -lrt
+
+# rpm -ivh chef-server-core-12.17.5-1.el7.x86_64.rpm 
+
+# chef-server-ctl reconfigure 
+
+# wget https://packages.chef.io/files/stable/chef-manage/2.5.4/el/7/chef-manage-2.5.4-1.el7.x86_64.rpm
+
+# ls -lrt
+
+# rpm -ivh chef-manage-2.5.4-1.el7.x86_64.rpm 
+
+# chef-manage-ctl reconfigure --accept-license
+
+# chef-server-ctl restart
+
+http://52.66.213.101/login
+
+

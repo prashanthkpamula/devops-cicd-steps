@@ -1,0 +1,259 @@
+
+
+3-Tier Architecture of Chef :
+
+1. ChefDK : Chef Development Kit
+
+2. ChefServer : Central Repository Server for Cookbooks
+
+3. ChefNode1  : 1. Linux Server or Windows Server
+				
+				1. WebServer
+				2. Application Server
+				3. DB Server
+				4. FTP Server
+				5. MAIL Server
+
+Chef for DevOps:
+
+Chef applies a continuous delivery model to the software release cycle by
+automating its workflow.
+
+System administration tasks are saved as cookbooks and recipes,
+reusable configuration steps toward a desired state.
+
+Chef has wide industry support across the cloud ecosystem,
+and works with just about every platform you can think of.
+#------------------------------------------------------------------------------#
+Chef Fundamentals or Chef RoadMap :
+
+
+1. Local Development
+
+&
+
+2. Cloud Development
+
+#------------------------------------------------------------------------------#
+1. Local Development Environment:
+
+On MacOS/Windows :
+
+Download, Install & Configure :
+
+1. Text Editors : ATOM  (https://atom.io/)
+
+2. Source Code Management Tool  :  Git (http://git-scm.com/downloads)
+
+3. Integrated Development Tool : Visual Studio Code (https://code.visualstudio.com/)
+
+4. Configuration Management Tool : Chef
+
+5. Virtualisation Tool : Oracle Virtualbox (https://www.virtualbox.org/)
+
+6. 3rd Party SSH Tools : Putty, Puttygen, WinScp, &
+Cmder (https://github.com/cmderdev/cmder/releases/download/v1.3.11/cmder.zip)
+
+7. Build and Manage Virtual Machines : Vagrant (https://www.vagrantup.com/downloads.html)
+#------------------------------------------------------------------------------#
+Download, Install and Configure Chef Development Kit(ChefDK) on MacOS:
+
+STEP-1 : Chef Development Kit (Version 3.2.30)
+
+https://downloads.chef.io/
+
+$ chef --version
+Chef Development Kit Version: 3.2.30
+chef-client version: 14.4.56
+delivery version: master (6862f27aba89109a9630f0b6c6798efec56b4efe)
+berks version: 7.0.6
+kitchen version: 1.23.2
+inspec version: 2.2.70
+
+$ chef --version
+$ chef-client --version
+$ knife --version
+$ ohai --version
+$ berks --version
+$ kitchen --version
+$ foodcritic --version
+$ cookstyle --version
+
+STEP-2 : Virtualisation Tool :
+
+Oracle Virtualbox (https://www.virtualbox.org/)
+
+STEP-3 : Build and Manage Virtual Machines :
+
+Vagrant (https://www.vagrantup.com/downloads.html)
+
+STEP-4 : Text Editors :
+
+ATOM  (https://atom.io/)
+
+STEP-5 : Source Code Management Tool  :
+
+Git (http://git-scm.com/downloads)
+
+STEP-6 : 3rd Party SSH Tools : Putty, Puttygen, WinScp, &
+Cmder (https://github.com/cmderdev/cmder/releases/download/v1.3.11/cmder.zip)
+
+STEP-7 : Integrated Development Tool : Pycahrm, VSTS,
+
+Visual Studio Code (https://code.visualstudio.com/)
+
+#------------------------------------------------------------------------------#
+
+#------------------------------------------------------------------------------#
+Setup Lab Environment with Vagrant :
+(file:///Users/keshavkummari/Downloads/Vagrant-VirtualBox-Setup.pdf)
+
+Chef Workflow :
+
+When building and testing Chef code a normal workflow involves managing servers
+directly from your workstation.
+
+In this class, you’ll start by logging into a server directly to get to know the
+ way Chef works.
+
+In the second half of class, we’ll manage remote servers (nodes) using a workstation
+connected to a Chef Server.
+
+For now, we’ll start by managing a node using Vagrant and VirtualBox
+
+Objectives:
+• Check pre-reqs
+• Verify your ssh client
+• Install VirtualBox
+• Install Vagrant
+• Launch Centos VM
+
+Ensure your system meets the minimum requirements :
+
+1. Supports virtualisation. This is typically enabled in your BIOS
+
+2. Meets the minimum requirements to run VirtualBox
+
+3. Has at least 5GB of hard-disk space available
+
+4. Has at least 512MB RAM available for each VM you would like to run
+(this class may have a maximum of 3 VM’s running at any time,
+so please ensure you have at least 1.5GB RAM available)
+
+5. If using VMware Fusion, ensure nested virtualisation is enabled
+
+Note : Class Workflow
+
+For the first half of the class we will log into a Vagrant instance and
+work with Chef by directly managing the virtual machine.
+
+On the virtual CentOS instance we will install the Chef Development Kit (ChefDK)
+and write code using a command-line text editor, like Vi, Emac or Nano.
+
+In the second half of the class we will manage several Vagrant instances
+remotely using a Chef Server.
+
+For these exercises we will be using your local machine, where the
+ChefDK will also be installed.
+
+STEP-1 : Go to Local Machine(Laptop/Desktop) and Verify Vagrant :
+
+$ vagrant -v
+Vagrant 2.2.1
+
+STEP-2 : Go to Local Machine(Laptop/Desktop) and Verify ChefDK :
+
+$ chef --version
+Chef Development Kit Version: 3.2.30
+chef-client version: 14.4.56
+delivery version: master (6862f27aba89109a9630f0b6c6798efec56b4efe)
+berks version: 7.0.6
+kitchen version: 1.23.2
+inspec version: 2.2.70
+
+
+STEP-4 : Register & Login to Vagrantup.com :
+
+UserName : keshav.kummari@gmail.com
+PassWord :
+
+https://app.vagrantup.com/
+
+
+$ vagrant login
+WARNING: This command has been deprecated and aliased to `vagrant cloud auth login`
+In a moment we will ask for your username and password to HashiCorp's
+Vagrant Cloud. After authenticating, we will store an access token locally on
+disk. Your login details will be transmitted over a secure connection, and
+are never stored on disk locally.
+
+If you do not have an Vagrant Cloud account, sign up at
+https://www.vagrantcloud.com
+
+Vagrant Cloud username or email: keshav.kummari@gmail.com
+Password (will be hidden):
+Token description (Defaults to "Vagrant login from Keshavs-MacBook-Pro.local"):
+You are now logged in.
+$
+
+
+
+
+#~~~~~~~~~~~~~~~   3-Tier Chef Architecture     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+
+1. ChefDK :
+
+Path      : /Users/keshavkummari/localchef/chefdk
+Hostname  : chefdk.kk.com
+IPaddress : 192.168.33.10
+
+Packages  : chefdk-2.3.1-1.el7.x86_64.rpm
+
+Certificate Files : chef.pem & org.pem
+
+Commands  :
+
+2. ChefServer :
+
+Path      : /Users/keshavkummari/localchef/chefserver
+Hostname  : chefserver.kk.com
+IPaddress : 192.168.33.11
+
+Packages  : chef-server-core-12.17.5-1.el7.x86_64.rpm
+          : chef-manage-2.5.4-1.el7.x86_64.rpm  (Web Based Application)
+
+Commands  : chef-server-ctl reconfigure
+          : chef-manage-ctl reconfigure  --accept-license
+
+Certificate Files : org.pem & user.pem
+
+3. Chefnode1 :
+
+Path      : /Users/keshavkummari/localchef/chefnode1
+Hostname  : chefnode1.kk.com
+IPaddress : 192.168.33.12
+
+Packages  : chef-client
+
+Commands  :
+
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+
+
+file '/tmp/testfile.txt' do
+	content 'Welcome to Chef Configuration Management Tool'
+	action :create
+end
+
+
+File : Type
+
+testfile.txt : Name
+
+content 'Welcome to Chef Configuration Management Tool' :  Properties
+
+
+
+
+

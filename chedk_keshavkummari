@@ -1,0 +1,156 @@
+
+ChefDK Server :
+
+# hostnamectl set-hostname "chefdk.keshavkummari.com"
+
+# ifconfig 
+
+# echo 172.31.30.62 chefdk.keshavkummari.com >> /etc/hosts
+
+# echo 172.31.17.9 chefserver.keshavkummari.com >> /etc/hosts
+
+# echo 172.31.20.153 chefnode1.keshavkummari.com >> /etc/hosts
+
+# cat /etc/hosts
+
+172.31.17.9 chefserver.keshavkummari.com
+172.31.30.62 chefdk.keshavkummari.com
+172.31.20.153 chefnode1.keshavkummari.com
+
+
+# yum install vim* wget* curl* elinks* unzip* -y
+
+# wget https://packages.chef.io/files/stable/chefdk/2.3.1/el/7/chefdk-2.3.1-1.el7.x86_64.rpm
+
+# ls -lrt 
+
+# rpm -ivh chefdk-2.3.1-1.el7.x86_64.rpm 
+
+# chef --version
+
+Assign the Password to the user:
+
+# password centos
+
+Change the user Group:
+
+# usermod -aG wheel centos
+
+
+#-------------------Code Repository & Version Control your ChefDK--------------#
+
+STEP-1 : Generate SSH-Keys
+
+[vagrant@chefdk workstation]$ ssh-keygen
+
+STEP-2 : Read the Public Key:
+
+[vagrant@chefdk workstation]$ cat /home/vagrant/.ssh/id_rsa.pub
+
+STEP-3 : Go to github account and update the public key under settings.
+
+STEP-4 : Go to ChefDK and Validate your git logins:
+
+[vagrant@chefdk workstation]$ git config --global user.name "keshavkummari"
+[vagrant@chefdk workstation]$ git config --global user.email "keshav.kummari@gmail.com"
+
+STEP-5 : Execute Git Commands :
+
+[vagrant@chefdk workstation]$ git init
+
+[vagrant@chefdk workstation]$ git add .
+
+[vagrant@chefdk workstation]$ git status
+
+[vagrant@chefdk workstation]$ git commit -m "FirstCommit"
+
+[vagrant@chefdk workstation]$ git pull https://github.com/keshavkummari/aws_chefdk_cookbook.git master
+
+[vagrant@chefdk workstation]$ git remote add origin https://github.com/keshavkummari/aws_chefdk_cookbook.git
+
+[vagrant@chefdk workstation]$ git remote -v
+
+[vagrant@chefdk workstation]$ git push -u origin master
+
+STEP-6 : Go to github account validate your repository:
+
+https://github.com/keshavkummari/aws_chefdk_cookbook
+#------------------------------------------------------------------------------#
+[centos@chefdk ~]$ cat fileRecipe.rb
+
+file '/tmp/FirstFileUsingChef.txt' do
+	content 'Welcome to Chef First File Create Recipe'
+end
+
+[centos@chefdk ~]$ sudo chef-client --local-mode fileRecipe.rb
+
+[centos@chefdk ~]$ ls -lrt /tmp/FirstFileUsingChef.txt 
+-rw-r--r--. 1 root root 40 Jan 12 11:24 /tmp/FirstFileUsingChef.txt
+
+[centos@chefdk ~]$ cat /tmp/FirstFileUsingChef.txt 
+Welcome to Chef First File Create Recipe
+
+#------------------------------------------------------------------------------#
+Example :
+
+1. Create a cookbook?
+
+2. Write a Recipe file.
+
+3. Test a cookbook
+
+4. Upload cookbook to server
+
+5. Update node run_list
+
+6. Execute chef-client on the node
+
+#------------------------------------------------------------------------------#
+
+[centos@chefdk ~]$  chef generate cookbook cookbooks/file_test
+
+[centos@chefdk ~]$ tree
+
+|-- cookbooks
+|   |-- file_test
+|   |   |-- Berksfile
+|   |   |-- chefignore
+|   |   |-- LICENSE
+|   |   |-- metadata.rb
+|   |   |-- README.md
+|   |   |-- recipes
+|   |   |   `-- default.rb
+|   |   |-- spec
+|   |   |   |-- spec_helper.rb
+|   |   |   `-- unit
+|   |   |       `-- recipes
+|   |   |           `-- default_spec.rb
+|   |   `-- test
+|   |       `-- smoke
+|   |           `-- default
+|   |               `-- default_test.rb
+|   `-- README.md
+|-- fileRecipe.rb
+
+
+[centos@chefdk ~]$ cat cookbooks/file_test/recipes/default.rb 
+#
+# Cookbook:: file_test
+# Recipe:: default
+#
+# Copyright:: 2019, The Authors, All Rights Reserved.
+file '/tmp/testfile.txt' do
+	owner 'root'
+	group 'rot'
+	mode  '0644'
+	content 'Welcome to Chef World'
+	action :create
+end
+
+
+[centos@chefdk file_test]$ cookstyle test file_test
+Inspecting 1 file
+.
+
+1 file inspected, no offenses detected
+

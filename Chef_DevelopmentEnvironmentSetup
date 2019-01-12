@@ -1,0 +1,74 @@
+
+Development Environment Setup :
+
+Install the latest stable ChefDK.
+
+# curl -s https://omnitruck.chef.io/install.sh | sudo bash -s -- -P chefdk
+
+# echo 'eval "$(chef shell-init bash)"' >> ~/.bash_profile
+
+# source ~/.bash_profile
+
+Install Docker :
+
+# sudo yum install -y git yum-utils
+
+# sudo yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
+
+# sudo yum makecache fast
+
+# sudo yum -y install docker-ce
+
+# sudo systemctl enable docker
+
+# sudo systemctl start docker
+
+# sudo usermod -aG docker $USER
+
+# sudo systemctl stop getty@tty1.service
+
+# sudo systemctl mask getty@tty1.service
+
+# logout
+
+
+Log back in, the run:
+
+# docker network create --subnet=10.1.1.0/24 testnet
+
+# gem install kitchen-docker
+
+
+Configure Git
+
+# git config --global user.name "Your Name"
+
+# git config --global user.email "email@example.com"
+
+# git config --global core.editor vim
+
+# git config --global color.ui auto
+
+#---------------------------------------------------#
+ChefDK/Workstation : 
+
+#---------------------------------------------------#
+ChefDK or Workstation :
+
+Package : chef-12.0.3.1 
+
+#---------------------------------------------------#
+ChefServer :
+
+Package : chef-server-11.
+
+# yum install chef-server* -y
+
+# chef-server-ctl reconfigure
+
+# chef-server-ctl status
+
+#---------------------------------------------------#
+ChefNode1 :
+#---------------------------------------------------#
+

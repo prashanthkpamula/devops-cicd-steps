@@ -1,0 +1,346 @@
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+Chef Architecture : 3 Tier Architecture
+
+Workstation ---->> Server ---->> Node1,Node2,Node3.....NodeNth
+
+ChefDK ----->> ChefServer ----->> ChefNode1
+
+Write Chef Cookbooks to execute below requirement on Nodes:
+
+1. WebServer        = Apache httpd
+2. Database Server  = MySQL or Mariadb
+3. Ftp Server       = Vsftpd
+4. Email Server     = SMTP or Postfix
+5. Monitoring Tools = Nagios, Splunk or ELK
+
+Write cookbooks on ChefDK & Upload to ChefServer and Pull the Cookbook on Nodes.
+
+Flow on ChefDK Server:
+1. Create
+2. Test
+3. Upload
+&
+4. Update
+#~~~~~~~~~~~~~~~   3-Tier Chef Architecture     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+
+1. ChefDK :
+
+Path      : /Users/keshavkummari/chef_kk/chefdk
+Hostname  : chefdk.keshavkummari.com
+IPaddress : 192.168.33.10
+
+Packages  : chefdk-2.3.1-1.el7.x86_64.rpm
+
+Certificate Files : chef.pem & org.pem
+
+Commands  :
+
+2. ChefServer :
+
+Path      : /Users/keshavkummari/chef_kk/chefserver
+Hostname  : chefserver.keshavkummari.com
+IPaddress : 192.168.33.11
+
+Packages  : chef-server-core-12.17.5-1.el7.x86_64.rpm
+          : chef-manage-2.5.4-1.el7.x86_64.rpm  (Web Based Application)
+
+Commands  : chef-server-ctl reconfigure
+          : chef-manage-ctl reconfigure  --accept-license
+
+Certificate Files : org.pem & user.pem
+
+3. Chefnode1 :
+
+Path      : /Users/keshavkummari/chef_kk/chefnode1
+Hostname  : chefnode1.keshavkummari.com
+IPaddress : 192.168.33.12
+
+Packages  : chef-client
+
+Commands  :
+
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+Configure :
+
+# Syntax :
+
+ipaddress hostname fully-qualifiled-domain-name
+
+# vi /etc/hosts
+192.168.33.10 chefdk      chefdk.keshavkummari.com
+192.168.33.11 chefserver  chefserver.keshavkummari.com
+192.168.33.12 chefnode1   chefnode1.keshavkummari.com
+
+
+#---- Download, Install & Configure ChefServer & ChefManage on ChefServer  -----#
+
+https://downloads.chef.io/chef-server/stable/12.17.5
+
+ChefServer:
+[vagrant@chefserver ~]$ cd /opt/
+[vagrant@chefserver ~]$ wget https://packages.chef.io/files/stable/chef-server/12.17.5/el/7/chef-server-core-12.17.5-1.el7.x86_64.rpm
+[vagrant@chefserver ~]$ sudo rpm -ivh chef-server-core-12.17.5-1.el7.x86_64.rpm
+
+[vagrant@chefserver ~]$ sudo chef-server-ctl reconfigure
+
+[vagrant@chefserver ~]$ sudo chef-server-ctl restart/status/start
+
+[vagrant@chefserver ~]$ sudo chef-server-ctl status
+
+Chef-Manage :
+[vagrant@chefserver ~]$ wget https://packages.chef.io/files/stable/chef-manage/2.5.4/el/7/chef-manage-2.5.4-1.el7.x86_64.rpm
+[vagrant@chefserver ~]$ sudo rpm -ivh chef-manage-2.5.4-1.el7.x86_64.rpm
+
+[vagrant@chefserver ~]$ chef-manage-ctl reconfigure --accept-license
+
+[vagrant@chefserver ~]$ sudo chef-manage-ctl status
+
+Go to Browser and validate : https://192.168.33.11/login
+
+
+Create User and Organisation on ChefServer :
+
+Create User:
+
+Syntax:
+# chef-server-ctl user-create <username> <firstname> <middlename> <lastname> "<user_email_id>" "<Password>" -f <user_private-key.pem>
+
+[vagrant@chefserver ~]$ sudo chef-server-ctl user-create ckkummari Chenna Kesavulu Kummari "keshav.kummari@gmail.com" "redhat@123" -f ckkummari.pem
+
+Create Organisation:
+
+Syntax:
+# chef-server-ctl org-create <org-short-name> "<org-full-name>" -a <user_name> -f <orgshort-validator.pem>
+
+[vagrant@chefserver ~]$ sudo chef-server-ctl org-create keshavkummari "Keshav Kummari Pvt Ltd" -a ckkummari -f keshavkummari-validator.pem
+
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+
+#---- Download, Install & Configure Chef Development Kit on ChefDK Server ------#
+
+1. ChefDK :
+
+Path      : /Users/keshavkummari/chef_kk/chefdk
+Hostname  : chefdk.keshavkummari.com
+IPaddress : 192.168.33.10
+
+Certificate Files : chef.pem & org.pem
+
+# vi /etc/hosts
+192.168.33.10 chefdk      chefdk.keshavkummari.com
+192.168.33.11 chefserver  chefserver.keshavkummari.com
+192.168.33.12 chefnode1   chefnode1.keshavkummari.com
+
+Chef Development Kit :
+https://packages.chef.io/files/stable/chefdk/2.3.1/el/7/chefdk-2.3.1-1.el7.x86_64.rpm
+
+
+1. Create a User for System with Root Privilagies : vagrant
+2. Login as User : vagrant
+3. Create Project Directory : # mkdir ckk
+4. Navigate to Project Directory : # cd ckk
+5. Create a .chef directory : # cd .chef  (.chef is for Project structure)
+6. Navigate to .chef directory : # cd .chef
+7. Configure knife : [vagrant@chefdk .chef]$ knife configure
+8. Fetch SSL certificates :
+[vagrant@chefdk .chef]$ knife ssl fetch (Fetch the SSL certificate from ChefServer)
+9. Validate SSL certificates : # knife ssl check
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+ChefNode1 Setup with BootStrap :
+
+Let's we have 10 nodes and add this 10 nodes to ChefServer, so that we can access from ChefDK.
+
+1. ChefNode1
+2. ChefNode2
+3. ChefNode3
+4. ChefNode4
+5. ChefNode5
+
+3. Chefnode1 :
+
+Path      : /Users/keshavkummari/chef_kk/chefnode1
+Hostname  : chefnode1.keshavkummari.com
+IPaddress : 192.168.33.12
+
+Packages  : chef-client
+
+Commands  :
+
+# vi /etc/hosts
+192.168.33.10 chefdk      chefdk.keshavkummari.com
+192.168.33.11 chefserver  chefserver.keshavkummari.com
+192.168.33.12 chefnode1   chefnode1.keshavkummari.com
+
+User Create : chefadmin
+Sudo Access : cat /etc/sudoers
+# usermode -aG wheel chefadmin
+
+# knife bootstrap <node1_Ipaddress> -x <UserName> -P <password> --sudo
+
+# knife bootstrap 192.168.33.12 -x root -P redhat@123 --sudo
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+
+Example :
+
+1. Create a cookbook?
+
+2. Write a Recipe file.
+
+3. Test a cookbook
+
+4. Upload cookbook to server
+
+5. Update node run_list
+
+6. Execute chef-client on the node
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+What are the commands to create a cookbook?
+
+  - knife cookbook create <cookbook name> [Old Version]
+    - It will create full directory structure.
+    - It is not associated with git.
+
+  - chef generate cookbook <cookbook name> [New Version]
+    - It will create partial directory structure.
+    - It is associate with git.
+    - It will create cookbook in current directory.
+    - So, you need to go to cookbooks directory
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+Crete a file in node1 :
+
+Go to ChefDK Server and write a cookbook and push the
+cookbook to server and then execute on node1.
+
+STEP-1 : Create a cookbook:
+
+# chef generate cookbook cookbooks/file_test
+
+STEP-2 : Write a Recipe file:
+
+# vi cookbooks/file_test/recipes/default.rb
+
+STEP-3 : Test a cookbook
+
+# cookstyle test file_test
+
+STEP-4 : Upload cookbook to server
+
+#
+
+STEP-5 : Update node run_list
+
+STEP-6 : Execute chef-client on the node
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+
+STEP-1 : Create a cookbook:
+
+[vagrant@chefdk ~]$ chef generate cookbook cookbooks/file_test
+Generating cookbook file_test
+- Ensuring correct cookbook file content
+- Committing cookbook files to git
+- Ensuring delivery configuration
+- Ensuring correct delivery build cookbook content
+- Adding delivery configuration to feature branch
+- Adding build cookbook to feature branch
+- Merging delivery content feature branch to master
+
+Your cookbook is ready. Type `cd cookbooks/file_test` to enter it.
+
+There are several commands you can run to get started locally developing and testing your cookbook.
+Type `delivery local --help` to see a full list.
+
+Why not start by writing a test? Tests for the default recipe are stored at:
+
+test/integration/default/default_test.rb
+
+If you'd prefer to dive right in, the default recipe can be found at:
+
+recipes/default.rb
+
+STEP-2 : View the cookbook:
+
+[vagrant@chefdk ~]$ tree cookbooks/file_test/
+cookbooks/file_test/
+|-- Berksfile
+|-- CHANGELOG.md
+|-- chefignore
+|-- LICENSE
+|-- metadata.rb
+|-- README.md
+|-- recipes
+|   `-- default.rb
+|-- spec
+|   |-- spec_helper.rb
+|   `-- unit
+|       `-- recipes
+|           `-- default_spec.rb
+`-- test
+    `-- integration
+        `-- default
+            `-- default_test.rb
+
+7 directories, 10 files
+
+STEP-3 : Write a Recipe file:
+
+[vagrant@chefdk ~]$ vi cookbooks/file_test/recipes/default.rb
+
+[vagrant@chefdk ~]$ cat cookbooks/file_test/recipes/default.rb
+#
+# Cookbook:: file_test
+# Recipe:: default
+#
+# Copyright:: 2019, The Authors, All Rights Reserved.
+
+file '/tmp/testfile.txt' do
+	owner 'root'
+	group 'rot'
+	mode  '0644'
+	content 'Welcome to Chef World'
+	action :create
+end
+
+STEP-4 : Validate the cookbook:
+
+[vagrant@chefdk ~]$ cookstyle test  file_test
+Inspecting 0 files
+
+
+0 files inspected, no offenses detected
+
+STEP-5 : Upload cookbook to Chefserver :
+
+[vagrant@chefdk ~]$ knife cookbook list
+
+[vagrant@chefdk ~]$ knife cookbook upload file_test
+
+[vagrant@chefdk ~]$ knife node list
+
+[vagrant@chefdk ~]$ knife node run_list add chefnode1.keshavkummari.com file_test
+
+[vagrant@chefdk ~]$ knife node show chefnode1.keshavkummari.com
+
+
+STEP-6 : Execute chef-client on the chefnode1:
+
+[vagrant@chefnode1 ~]$ sudo chef-client
+
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#

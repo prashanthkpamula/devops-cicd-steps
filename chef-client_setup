@@ -1,0 +1,456 @@
+#------------------------------------------------------------------------------#
+The Chef-client :
+#------------------------------------------------------------------------------#
+
+How to call the chef-client :
+
+STEP-1 : Go to ChefDK server :
+
+Run the local chef-client :
+
+$ sudo chef-client -z --runlist "apache::server"
+
+$ sudo chef-client -z --runlist "workstation::setup"
+
+$ sudo chef-client -z -r  "recipe[apache::server]"
+
+$ sudo chef-client -z -r  "workstation[apache::server]"
+
+Running Multiple Recipes :
+$ sudo chef-client -z -r  "recipe[apache::server],recipe[workstation::setup]"
+
+#------------------------------------------------------------------------------#
+
+#------------------------------------------------------------------------------#
+[vagrant@chefdk ~]$ cp -pv /opt/setup.rb cookbooks/workstation/
+'/opt/setup.rb' -> 'cookbooks/workstation/setup.rb'
+
+
+#------------------------------------------------------------------------------#
+Setup Recipes : include_recipe method
+
+https://docs.chef.io/recipes.html#include-recipes
+
+STEP-1 :
+[vagrant@chefdk ~]$ tree cookbooks/workstation/
+cookbooks/workstation/
+|-- Berksfile
+|-- CHANGELOG.md
+|-- chefignore
+|-- hello.rb
+|-- LICENSE
+|-- metadata.rb
+|-- README.md
+|-- recipes
+|   |-- default.rb
+|   `-- setup1.rb
+|-- setup.rb
+|-- spec
+|   |-- spec_helper.rb
+|   `-- unit
+|       `-- recipes
+|           `-- default_spec.rb
+`-- test
+    `-- integration
+        `-- default
+            `-- default_test.rb
+
+7 directories, 13 files
+
+STEP-2 :
+
+[vagrant@chefdk recipes]$ vi default.rb
+
+[vagrant@chefdk recipes]$ pwd
+/home/vagrant/cookbooks/workstation/recipes
+
+[vagrant@chefdk recipes]$ cat default.rb
+#
+# Cookbook:: workstation
+# Recipe:: default
+#
+# Copyright:: 2019, The Authors, All Rights Reserved.
+
+include_recipe 'workstation::setup'
+
+STEP-3 :
+
+[vagrant@chefdk ~]$ sudo chef-client -z -r "recipe[workstation]"
+[2019-01-10T06:15:38+00:00] WARN: No config file found or specified on command line, using command line options.
+Starting Chef Client, version 14.8.12
+resolving cookbooks for run list: ["workstation"]
+Synchronizing Cookbooks:
+  - workstation (0.1.0)
+Installing Cookbook Gems:
+Compiling Cookbooks...
+Converging 4 resources
+Recipe: workstation::setup
+  * yum_package[tree] action install (up to date)
+  * yum_package[ntp] action install (up to date)
+  * file[/etc/motd] action create (up to date)
+  * service[ntpd] action enable (up to date)
+  * service[ntpd] action start (up to date)
+
+Running handlers:
+Running handlers complete
+Chef Client finished, 0/5 resources updated in 05 seconds
+
+
+#------------------------------------------------------------------------------#
+Example :
+
+STEP-1 : Go to Apache Cookbook and include_recipe method :
+
+[vagrant@chefdk ~]$ tree cookbooks/apache/
+cookbooks/apache/
+|-- Berksfile
+|-- CHANGELOG.md
+|-- chefignore
+|-- LICENSE
+|-- metadata.rb
+|-- README.md
+|-- recipes
+|   |-- default.rb
+|   `-- server.rb
+|-- spec
+|   |-- spec_helper.rb
+|   `-- unit
+|       `-- recipes
+|           |-- default_spec.rb
+|           `-- server_spec.rb
+`-- test
+    `-- integration
+        `-- default
+            |-- default_test.rb
+            `-- server_test.rb
+
+7 directories, 13 files
+
+STEP-2 : Open with vi editor and add :
+[vagrant@chefdk ~]$ vi cookbooks/apache/recipes/default.rb
+
+STEP-3 : Read the file:
+[vagrant@chefdk ~]$ cat cookbooks/apache/recipes/default.rb
+#
+# Cookbook:: apache
+# Recipe:: default
+#
+# Copyright:: 2019, The Authors, All Rights Reserved.
+
+include_recipe 'apache::server'
+[vagrant@chefdk ~]$
+
+STEP-4 : Execute the recipe :
+
+[vagrant@chefdk ~]$ sudo chef-client -z -r "recipe[apache]"
+[2019-01-10T06:19:34+00:00] WARN: No config file found or specified on command line, using command line options.
+Starting Chef Client, version 14.8.12
+resolving cookbooks for run list: ["apache"]
+Synchronizing Cookbooks:
+  - apache (0.1.0)
+Installing Cookbook Gems:
+Compiling Cookbooks...
+Converging 3 resources
+Recipe: apache::server
+  * yum_package[httpd] action install (up to date)
+  * file[/var/www/html/index.html] action create (up to date)
+  * service[httpd] action enable (up to date)
+  * service[httpd] action start (up to date)
+
+Running handlers:
+Running handlers complete
+Chef Client finished, 0/4 resources updated in 04 seconds
+
+#------------------------------------------------------------------------------#
+About Ohai : (https://docs.chef.io/ohai.html)
+
+Ohai is a tool that is used to collect system configuration data,
+which is provided to the chef-client for use within cookbooks.
+
+Ohai is run by the chef-client at the beginning of every Chef run to determine
+system state.
+
+Ohai includes many built-in plugins to detect common configuration details as
+well as a plugin model for writing custom plugins.
+
+The types of attributes Ohai collects include but are not limited to:
+
+1. Operating System
+2. Network
+3. Memory
+4. Disk
+5. CPU
+6. Kernel
+7. Host names
+8. Fully qualified domain names
+9. Virtualization
+10. Cloud provider metadata
+
+Attributes that are collected by Ohai are automatic level attributes,
+in that these attributes are used by the chef-client to ensure that these
+attributes remain unchanged after the chef-client is done configuring the node.
+
+Ohai collects data for many platforms, including AIX, Darwin, Linux, FreeBSD,
+OpenBSD, NetBSD, Solaris, and any Microsoft Windows operating systems.
+
+#------------------------------------------------------------------------------#
+[vagrant@chefdk ~]$ grep MemTotal /proc/meminfo
+MemTotal:        1016860 kB
+
+[vagrant@chefdk ~]$ grep 'cpu MHz' /proc/cpuinfo
+cpu MHz		: 2494.316
+
+[vagrant@chefdk ~]$ cat cookbooks/workstation/recipes/setup.rb
+package 'tree' do
+	action :install
+end
+
+package 'ntp'
+
+file '/etc/motd' do
+	content 'This server is the property of ...'
+end
+
+service 'ntpd' do
+	action [:enable, :start]
+end
+
+package 'git' do
+	action :install
+end
+
+file '/etc/motd' do
+	content 'This server is the property of ChefDK
+	HOSTNAME: chefdk.keshavkummari.com
+	IPADDRESS: 192.168.33.10
+	CPU: 2494.316
+	MEMORY: 1016860 kB
+  '
+  action :create
+end
+
+
+[vagrant@chefdk ~]$ sudo chef-client -zr "recipe[workstation]"
+[2019-01-10T06:48:00+00:00] WARN: No config file found or specified on command line, using command line options.
+Starting Chef Client, version 14.8.12
+resolving cookbooks for run list: ["workstation"]
+Synchronizing Cookbooks:
+  - workstation (0.1.0)
+Installing Cookbook Gems:
+Compiling Cookbooks...
+Converging 6 resources
+Recipe: workstation::setup
+  * yum_package[tree] action install (up to date)
+  * yum_package[ntp] action install (up to date)
+  * file[/etc/motd] action create (up to date)
+  * service[ntpd] action enable (up to date)
+  * service[ntpd] action start (up to date)
+  * yum_package[git] action install (up to date)
+  * file[/etc/motd] action create
+    - update content in file /etc/motd from ae2b39 to 4d26be
+    --- /etc/motd	2019-01-09 16:16:44.819874526 +0000
+    +++ /etc/.chef-motd20190110-12311-18dv87d	2019-01-10 06:48:05.103290580 +0000
+    @@ -1,2 +1,7 @@
+    -This server is the property of ...
+    +This server is the property of ChefDK
+    +	HOSTNAME: chefdk.keshavkummari.com
+    +	IPADDRESS: 192.168.33.10
+    +	CPU: 2494.316
+    +	MEMORY: 1016860 kB
+    +
+    - restore selinux security context
+
+Running handlers:
+Running handlers complete
+Chef Client finished, 1/7 resources updated in 04 seconds
+
+
+[vagrant@chefdk ~]$ cat /etc/motd
+This server is the property of ChefDK
+	HOSTNAME: chefdk.keshavkummari.com
+	IPADDRESS: 192.168.33.10
+	CPU: 2494.316
+	MEMORY: 1016860 kB
+  [vagrant@chefdk ~]$
+
+Validate :
+
+[vagrant@chefdk ~]$ exit
+logout
+Connection to 127.0.0.1 closed.
+$ vagrant ssh
+/opt/vagrant/embedded/gems/2.2.1/gems/vagrant-2.2.1/lib/vagrant/util/which.rb:37: warning: Insecure world writable dir /Users/keshavkummari in PATH, mode 040777
+Last login: Thu Jan 10 04:26:12 2019 from 10.0.2.2
+This server is the property of ChefDK
+	HOSTNAME: chefdk.keshavkummari.com
+	IPADDRESS: 192.168.33.10
+	CPU: 2494.316
+	MEMORY: 1016860 kB
+  -bash: warning: setlocale: LC_CTYPE: cannot change locale (UTF-8): No such file or directory
+[vagrant@chefdk ~]$
+
+#------------------------------------------------------------------------------#
+Let's use a tool i.e ohai to hardcode the values:
+
+$ ohai
+$ ohai memory/total
+$ ohai cpu/0/mhz
+#------------------------------------------------------------------------------#
+Accessing the Node Attributes:
+(https://docs.chef.io/nodes.html#node-objects)
+
+Let's setup Welcome Message on Linux Server:
+
+Message of the Day file : /etc/motd
+
+STEP-1 :
+[vagrant@chefdk ~]$ cat cookbooks/workstation/recipes/setup.rb
+package 'tree' do
+	action :install
+end
+
+package 'ntp'
+
+file '/etc/motd' do
+	content 'This server is the property of ...'
+end
+
+service 'ntpd' do
+	action [:enable, :start]
+end
+
+package 'git' do
+	action :install
+end
+
+file '/etc/motd' do
+	content "Welcome to Keshav Kummari World and this Server belongs @KeshavKummari.com
+	HOSTNAME: #{node['hostname']}
+	IPADDRESS: #{node['ipaddress']}
+	CPU: #{node['cpu']['0']['mhz']}
+	MEMORY: #{node['memory']['total']}
+  "
+  owner 'root'
+  group 'root'
+  action :create
+end
+
+STEP-2 :
+
+[vagrant@chefdk ~]$ sudo chef-client -zr "recipe[workstation]"
+[2019-01-10T06:58:51+00:00] WARN: No config file found or specified on command line, using command line options.
+Starting Chef Client, version 14.8.12
+resolving cookbooks for run list: ["workstation"]
+Synchronizing Cookbooks:
+  - workstation (0.1.0)
+Installing Cookbook Gems:
+Compiling Cookbooks...
+Converging 6 resources
+Recipe: workstation::setup
+  * yum_package[tree] action install (up to date)
+  * yum_package[ntp] action install (up to date)
+    -
+    +This server is the property of ...
+    - restore selinux security context
+  * service[ntpd] action enable (up to date)
+  * service[ntpd] action start (up to date)
+  * yum_package[git] action install (up to date)
+  * file[/etc/motd] action create
+    - update content in file /etc/motd from ae2b39 to d3b0d5
+    --- /etc/motd	2019-01-10 06:58:56.734092470 +0000
+    +++ /etc/.chef-motd20190110-13089-i3l84p	2019-01-10 06:58:56.936086642 +0000
+    @@ -1,2 +1,7 @@
+    -This server is the property of ...
+    +Welcome to Keshav Kummari World and this Server belongs @KeshavKummari.com
+    +	HOSTNAME: chefdk
+    +	IPADDRESS: 10.0.2.15
+    +	CPU: 2494.316
+    +	MEMORY: 1016860kB
+    +
+    - restore selinux security context
+
+Running handlers:
+Running handlers complete
+Chef Client finished, 2/7 resources updated in 05 seconds
+
+
+
+#------------------------------------------------------------------------------#
+Add Node Details to the Web Application:
+
+
+[vagrant@chefdk ~]$ vi cookbooks/apache/recipes/server.rb
+
+[vagrant@chefdk ~]$ cat cookbooks/apache/recipes/server.rb
+#
+# Cookbook:: apache
+# Recipe:: server
+#
+# Copyright:: 2019, The Authors, All Rights Reserved.
+
+package 'httpd' do
+	action :install
+end
+
+#file '/var/www/html/index.html' do
+#	content '<h1>Hello, world!</h1>'
+#end
+
+
+file '/var/www/html/index.html' do
+	content "<h1>Hello, world!</h1>
+  <h2>IPADDRESS: #{node['ipaddress']}</h2>
+  <h2>HOSTNAME: #{node['hostname']}</h2>
+	"
+end
+
+service 'httpd' do
+	action [:enable,:start]
+end
+
+
+[vagrant@chefdk ~]$ sudo chef-client -zr "recipe[apache]"
+[2019-01-10T07:15:29+00:00] WARN: No config file found or specified on command line, using command line options.
+Starting Chef Client, version 14.8.12
+resolving cookbooks for run list: ["apache"]
+Synchronizing Cookbooks:
+  - apache (0.1.0)
+Installing Cookbook Gems:
+Compiling Cookbooks...
+Converging 3 resources
+Recipe: apache::server
+  * yum_package[httpd] action install (up to date)
+  * file[/var/www/html/index.html] action create
+    - update content in file /var/www/html/index.html from 17d291 to 086d3b
+    --- /var/www/html/index.html	2019-01-10 05:40:40.826830278 +0000
+    +++ /var/www/html/.chef-index20190110-13752-1b63sct.html	2019-01-10 07:15:37.012385607 +0000
+    @@ -1,2 +1,5 @@
+     <h1>Hello, world!</h1>
+    +  <h2>IPADDRESS: 10.0.2.15</h2>
+    +  <h2>HOSTNAME: chefdk</h2>
+    +
+    - restore selinux security context
+  * service[httpd] action enable (up to date)
+  * service[httpd] action start (up to date)
+
+Running handlers:
+Running handlers complete
+Chef Client finished, 1/4 resources updated in 07 seconds
+
+
+
+#------------------------------------------------------------------------------#
+
+#------------------------------------------------------------------------------#
+
+#------------------------------------------------------------------------------#
+
+#------------------------------------------------------------------------------#
+
+#------------------------------------------------------------------------------#
+
+#------------------------------------------------------------------------------#
+
+#------------------------------------------------------------------------------#
+
+#------------------------------------------------------------------------------#
