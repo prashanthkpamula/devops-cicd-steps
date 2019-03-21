@@ -1,0 +1,14 @@
+$ cat Dockerfile 
+FROM centos:latest
+
+MAINTAINER ckk.cloud <ckk.cloud@gmail.com>
+
+RUN yum update -y
+
+RUN yum install -y net-tools curl wget unzip elinks vim httpd httpd-tools 
+
+RUN echo "This is a Custom Index File build during the image creation" >> /var/www/html/index.html
+
+EXPOSE 80
+
+CMD     ["/usr/sbin/httpd","-D","FOREGROUND"]
